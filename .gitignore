@@ -1,0 +1,75 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+
+# Output of the go coverage tool
+*.out
+
+# Compiled object files
+*.o
+*.a
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
+
+# Build artifacts and compiled files
+/bin/
+/pkg/
+/dist/
+/build/
+
+# Dependency directories
+/vendor/
+/node_modules/
+
+# IDE and editor specific files
+.idea/
+*.swp
+*~
+.vscode/
+*.code-workspace
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+._*
+
+# Local Go environment settings
+.env
+
+# Go module files (include only if you want to ignore modules, not recommended)
+/go.mod
+/go.sum
+
+# User-specific config and cache directories
+*.user
+*.local
+
+# Coverage reports
+*.coverprofile
+*.cov
+
+# Ignore the Git database files
+.git/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Others
+*.bak
+*.backup
+*.old
+*.orig
+
+# History file
+history.json
+
+# Executable files
+kai

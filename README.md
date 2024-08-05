@@ -14,7 +14,7 @@ Kai is your intelligent virtual assistant designed to seamlessly integrate with 
 ### Prerequisites
 
 - Go 1.16 or later
-- A Google API key with access to Generative AI
+- An API key with access to the Gemini API
 
 ### Installation
 

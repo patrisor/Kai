@@ -43,10 +43,6 @@ Thumbs.db
 # Local Go environment settings
 .env
 
-# Go module files (include only if you want to ignore modules, not recommended)
-/go.mod
-/go.sum
-
 # User-specific config and cache directories
 *.user
 *.local

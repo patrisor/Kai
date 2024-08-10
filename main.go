@@ -38,7 +38,7 @@ func initializeWindow(
 
 // Method initializes the application state
 func InitializeAppState() (*core.AppState, error) {
-    configFile := "config/config.json"
+    configFile := ".config/config.json"
     historyFile := "data/history.json"
     promptsFile := "resources/prompts.json"
     // Load the app configuration

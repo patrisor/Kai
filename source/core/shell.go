@@ -27,8 +27,10 @@ func (kai *Kai) RunShell() {
 		if err != nil {
 			log.Fatalf("Error sending message: %v", err)
 		}
+		// Process the JSON response
+		kai.Respond(responseJSON)
 
-		// TODO: Testing response (readable)
+		// Testing response (readable)
 		fmt.Print(responseJSON)
 
 	}

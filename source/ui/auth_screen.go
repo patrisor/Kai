@@ -71,8 +71,8 @@ func createSubmitButton(
 			if err != nil {
 				log.Fatalf("Failed to save config: %v", err)
 			}
-			// Show Home screen
-			ShowHomeScreen(window, state)
+			// Show Loading screen
+			ShowLoadingScreen(window, state)
 		}
 	})
 	submitButtonContainer := container.NewHBox(

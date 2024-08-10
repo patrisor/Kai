@@ -3,7 +3,7 @@ package main
 import (
     "os"
 	"fmt"
-	"log"
+    "log"
     "path/filepath"
 	// GUI
 	"fyne.io/fyne/v2"
@@ -79,6 +79,13 @@ func main() {
         )
         if err == nil {
             defer state.Kai.Client.Close()
+            // Prime the AI with the default primer
+            defaultPrimer, exists := state.Prompts.Primers["Default"]
+            if !exists {
+                log.Fatalf("Default primer not found")
+            }
+            state.Kai.PrimeAI(defaultPrimer, state.HistoryFile)
+            // Show Home Screen
             ui.ShowHomeScreen(window, state)
         } else {
             ui.ShowAuthScreen(window, state)

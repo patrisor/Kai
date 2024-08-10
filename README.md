@@ -28,8 +28,7 @@ cd kai
 2. Build and run the application:
 
 ```sh
-go build
-./kai
+go build && ./kai
 ```
 
 ### Usage

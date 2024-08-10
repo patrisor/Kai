@@ -15,7 +15,7 @@ import (
 
 // Method sets the app's environment variables programmatically
 func init() {
-    configDir := filepath.Join("config", "service-account-file.json")
+    configDir := filepath.Join(".config", "service-account-file.json")
     if _, err := os.Stat(configDir); err == nil {
         os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", configDir)
     } else {

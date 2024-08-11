@@ -46,8 +46,17 @@ func processCommand(kai *Kai, command string) {
 	sanitizedCommand := strings.ReplaceAll(command, ",", "")
 	// Execute command
 	output, err := kai.executeCommand(sanitizedCommand)
+
+	// TODO: Testing
+	// fmt.Printf("Error: %v\n", err)
+	// fmt.Printf("Output: %s\n", output)
+
 	if err != nil {
-		errorMessage := fmt.Sprintf("Command failed: %v", err)
+		errorMessage := fmt.Sprintf(
+			"Command failed: %v. " + 
+			"Please analyze the error and generate a new solution.",
+			err,
+		)
 
 		// TODO: Testing
 		fmt.Println(errorMessage)
@@ -91,12 +100,10 @@ func sanitizeAndUnmarshal(jsonStr string) ([]ResponseItem, error) {
 
 	// Sanitize the JSON string
 	sanitizedJSON := sanitizeJSONString(jsonStr)
-	
 	// Ensure that opening and closing brackets match
 	if strings.Count(sanitizedJSON, "[") != strings.Count(sanitizedJSON, "]") {
 		return nil, fmt.Errorf("json format error: unmatched brackets")
 	}
-
 	// Unmarshal into a slice of ResponseItem
 	var responseItems []ResponseItem
 	err := json.Unmarshal([]byte(sanitizedJSON), &responseItems)

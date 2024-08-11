@@ -28,6 +28,8 @@ func ShowLoadingScreen(window fyne.Window, state *core.AppState) {
 			container.NewCenter(loadingText),
 		),
 	)
+
+	// TODO: Put into a method, called `primeCommandScan``
 	// Run the system scan in a separate goroutine
 	go func() {
 		// Prime the AI with the default primer
@@ -51,4 +53,5 @@ func ShowLoadingScreen(window fyne.Window, state *core.AppState) {
 		// After the scan, transition to the Home screen
 		ShowHomeScreen(window, state)
 	}()
+	
 }

@@ -28,30 +28,29 @@ func ShowLoadingScreen(window fyne.Window, state *core.AppState) {
 			container.NewCenter(loadingText),
 		),
 	)
-
-	// TODO: Put into a method, called `primeCommandScan``
 	// Run the system scan in a separate goroutine
-	go func() {
-		// Prime the AI with the default primer
-		defaultPrimer, exists := state.Prompts.Primers["Default"]
-		if !exists {
-			log.Fatalf("Default primer not found")
-		}
-		state.Kai.PrimeAI(defaultPrimer, state.HistoryFile)
-		// Create a primer message that instructs Kai to scan for available commands
-		systemScanPrimer, exists := state.Prompts.Primers["SystemScan"]
-		if !exists {
-			log.Fatalf("SystemScan primer not found")
-		}
-		// Send the message to Kai
-		responseJSON, err := state.Kai.Reason(systemScanPrimer)
-		if err != nil {
-			log.Fatalf("Failed to send command scan message: %v", err)
-		}
-		// Process the JSON response
-		state.Kai.Respond(responseJSON)
-		// After the scan, transition to the Home screen
-		ShowHomeScreen(window, state)
-	}()
-	
+	go primeCommandScan(window, state)
+}
+
+// Method primes the AI with data from a system scan.
+func primeCommandScan(window fyne.Window, state *core.AppState) {
+	// Prime the AI with the default primer
+	defaultPrimer, exists := state.Prompts.Primers["Default"]
+	if !exists {
+		log.Fatalf("Default primer not found")
+	}
+	state.Kai.PrimeAI(defaultPrimer, state.HistoryFile)
+	// Create a primer message that instructs Kai to scan for available commands
+	systemScanPrimer, exists := state.Prompts.Primers["SystemScan"]
+	if !exists {
+		log.Fatalf("SystemScan primer not found")
+	}
+	responseJSON, err := state.Kai.Reason(systemScanPrimer)
+	if err != nil {
+		log.Fatalf("Failed to send command scan message: %v", err)
+	}
+	// Process the JSON response
+	state.Kai.Respond(responseJSON)
+	// After the scan, transition to the Home screen
+	ShowHomeScreen(window, state)
 }

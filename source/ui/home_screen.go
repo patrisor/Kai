@@ -18,9 +18,6 @@ import (
 
 // Method displays the home screen.
 func ShowHomeScreen(window fyne.Window, state *core.AppState) {
-
-	// TODO: Implement a greeting system on the Home Screen
-
 	// Set background color
 	backgroundColor := color.NRGBA{R: 253, G: 252, B: 251, A: 255}
 	background := canvas.NewRectangle(backgroundColor)
@@ -109,7 +106,7 @@ func createListenButton(
 		imageResource, fyne.NewSize(40, 40),
 		func() { // Button press event
 			fmt.Println("Button pressed, starting recording...")
-			handleButtonPress(
+			handleListenButtonPress(
 				state, &pressStartTime, 
 				&stopChan, &audioData, 
 				textEntry,
@@ -117,7 +114,7 @@ func createListenButton(
 		},
 		func() { // Button release event
 			fmt.Println("Button released, stopping recording...")
-			handleButtonRelease(pressStartTime, stopChan)
+			handleListenButtonRelease(pressStartTime, stopChan)
 		},
 	)
 	return button
@@ -165,7 +162,7 @@ func updateTextEntry(textEntry *widget.Entry, transcript string) {
 /* ************************************************************************* */
 
 // Method handles the button press event.
-func handleButtonPress(
+func handleListenButtonPress(
 	state *core.AppState, 
 	pressStartTime *time.Time, 
 	stopChan *chan struct{},
@@ -213,7 +210,7 @@ func handleButtonPress(
 }
 
 // Method handles the button release event.
-func handleButtonRelease(
+func handleListenButtonRelease(
 	pressStartTime time.Time, 
 	stopChan chan struct{},
 ) {

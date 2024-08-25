@@ -19,17 +19,15 @@ func ShowAuthScreen(window fyne.Window, state *core.AppState) {
 	// Change background color
 	backgroundColor := color.NRGBA{R: 253, G: 252, B: 251, A: 255}
 	background := canvas.NewRectangle(backgroundColor)
-	// Initialize error label component
+	// Initialize UI components
 	errorLabel := createErrorLabel()
-	// Initialize logo component
 	logo := createLogo("resources/assets/logo.png")
-	// Initialize key entry component
-	apiKeyEntry, apiKeyEntryContainer := createAPIKeyEntry(window, state)
-	apiKeyEntry.OnSubmitted = func(input string) {
-		initializeKai(input, window, state, errorLabel)
-	}
-	// Initialize submit button component
-	submitButtonContainer := createSubmitButton(apiKeyEntry, window, state)
+	apiKeyEntry, apiKeyEntryContainer := createAPIKeyEntry(
+		window, state, errorLabel,
+	)
+	submitButtonContainer := createSubmitButton(
+		apiKeyEntry, window, state, errorLabel,
+	)
 	// Set the content of the window
 	window.SetContent(
 		container.NewStack(
@@ -73,12 +71,16 @@ func createLogo(imageLocation string) *canvas.Image {
 func createAPIKeyEntry(
 	window fyne.Window, 
 	state *core.AppState,
+	errorLabel *canvas.Text,
 ) (*widget.Entry, *fyne.Container) {
 	apiKeyEntry := widget.NewEntry()
 	apiKeyEntry.SetPlaceHolder("Enter API Key")
 	apiKeyEntryContainer := container.NewGridWrap(
 		fyne.NewSize(400, 40), apiKeyEntry,
 	)
+	apiKeyEntry.OnSubmitted = func(input string) {
+		initializeKai(input, window, state, errorLabel)
+	}
 	return apiKeyEntry, apiKeyEntryContainer
 }
 
@@ -87,10 +89,11 @@ func createSubmitButton(
 	apiKeyEntry *widget.Entry, 
 	window fyne.Window, 
 	state *core.AppState,
+	errorLabel *canvas.Text,
 ) *fyne.Container {
 	submitButton := widget.NewButton("Submit", func() {
 		enteredAPIKey := apiKeyEntry.Text
-		initializeKai(enteredAPIKey, window, state, nil)
+		initializeKai(enteredAPIKey, window, state, errorLabel)
 	})
 	submitButtonContainer := container.NewHBox(
 		layout.NewSpacer(),

@@ -70,7 +70,7 @@ func main() {
     // Initialize Fyne app
     fyneApp := app.New()
     // Initialize window
-    window := initializeWindow(fyneApp, "Kai", 640, 480)
+    window := initializeWindow(fyneApp, "Kai", 1280, 720)
     // Attempt to initialize Kai with the API key if it exists
     if state.Config.APIKey != "" {
         state.Kai, err = core.InitializeKai(
@@ -85,6 +85,9 @@ func main() {
                 log.Fatalf("Default primer not found")
             }
             state.Kai.PrimeAI(defaultPrimer, state.HistoryFile)
+
+            // TODO: Implement a greeting system on the Home Screen
+
             // Show Home Screen
             ui.ShowHomeScreen(window, state)
         } else {

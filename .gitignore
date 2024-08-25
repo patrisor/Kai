@@ -67,5 +67,8 @@ Thumbs.db
 # History file
 history.json
 
+# Sensitive files
+.config/service-account-file.json
+
 # Executable files
 kai

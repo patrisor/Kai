@@ -1,9 +1,11 @@
 package core
 
 import (
+    "os"
 	"fmt"
     "time"
 	"context"
+	"encoding/binary"
 	// Text-to-Speech
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
 	"cloud.google.com/go/texttospeech/apiv1/texttospeechpb"
@@ -26,11 +28,19 @@ func (kai *Kai) Speak(text string) error {
                 Text: text,
             },
         },
+
+        // TODO: Pick voice
         Voice: &texttospeechpb.VoiceSelectionParams{
             LanguageCode: "en-US",
             Name:         "en-US-Polyglot-1",
             SsmlGender:   texttospeechpb.SsmlVoiceGender_MALE,
         },
+        // Voice: &texttospeechpb.VoiceSelectionParams{
+        //     LanguageCode: "en-AU",
+        //     Name:         "en-AU-Wavenet-C",
+        //     SsmlGender:   texttospeechpb.SsmlVoiceGender_FEMALE,
+        // },        
+
         AudioConfig: &texttospeechpb.AudioConfig{
             AudioEncoding:    texttospeechpb.AudioEncoding_LINEAR16,
             SpeakingRate:     1.0,
@@ -49,7 +59,7 @@ func (kai *Kai) Speak(text string) error {
     return nil
 }
 
-// Helper Mmthod to play audio using PortAudio
+// Helper Method to play audio using PortAudio
 func playAudio(audioData []byte, sampleRate int) error {
     // Initialize PortAudio
     err := portaudio.Initialize()
@@ -91,6 +101,47 @@ func playAudio(audioData []byte, sampleRate int) error {
     // Stop the audio stream
     if err := stream.Stop(); err != nil {
         return fmt.Errorf("failed to stop stream: %v", err)
+    }
+    return nil
+}
+
+// TODO: Move into utility methods
+// Method saves the recorded audio data to a WAV file.
+func saveToWavFile(filename string, audioData []byte) error {
+    file, err := os.Create(filename)
+    if err != nil {
+        return fmt.Errorf("failed to create file: %v", err)
+    }
+    defer file.Close()
+    // WAV file header
+    var header = []byte{
+        'R', 'I', 'F', 'F',
+        0, 0, 0, 0, // ChunkSize (to be filled later)
+        'W', 'A', 'V', 'E',
+        'f', 'm', 't', ' ',
+        16, 0, 0, 0, // Subchunk1Size (16 for PCM)
+        1, 0, // AudioFormat (1 for PCM)
+        1, 0, // NumChannels (1 for mono)
+        0x44, 0xac, 0, 0, // SampleRate (44100 Hz)
+        0x88, 0x58, 1, 0, // ByteRate (SampleRate * NumChannels * BitsPerSample/8)
+        2, 0, // BlockAlign (NumChannels * BitsPerSample/8)
+        16, 0, // BitsPerSample (16 bits)
+        'd', 'a', 't', 'a',
+        0, 0, 0, 0, // Subchunk2Size (to be filled later)
+    }
+    // Fill in the ChunkSize and Subchunk2Size
+    chunkSize := 36 + len(audioData)
+    subchunk2Size := len(audioData)
+    binary.LittleEndian.PutUint32(header[4:], uint32(chunkSize))
+    binary.LittleEndian.PutUint32(header[40:], uint32(subchunk2Size))
+    // Write the header and audio data to the file
+    _, err = file.Write(header)
+    if err != nil {
+        return fmt.Errorf("failed to write header: %v", err)
+    }
+    _, err = file.Write(audioData)
+    if err != nil {
+        return fmt.Errorf("failed to write audio data: %v", err)
     }
     return nil
 }

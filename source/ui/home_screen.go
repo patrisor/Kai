@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"context"
 	"image/color"
 	// Fyne
 	"fyne.io/fyne/v2"
@@ -61,10 +62,21 @@ func createTextEntryContainer(state *core.AppState) *fyne.Container {
 	textEntry := widget.NewEntry()
 	textEntry.SetPlaceHolder("Type your message here...")
 	textEntry.OnSubmitted = func(input string) {
+
+		// TODO: Convert to method
+		// Cancel the previous process if it exists
+		if state.CancelProcessFunc != nil {
+			state.CancelProcessFunc()
+		}
+		// Create a new context for the new process
+		ctx, cancel := context.WithCancel(context.Background())
+		state.ProcessContext = ctx
+		state.CancelProcessFunc = cancel
 		// Clear the text field after processing
 		updateTextEntry(textEntry, "")
-		// Process input
-		processUserInput(state, input, textEntry)
+		// Process input in a separate goroutine
+		go processUserInput(state, input, textEntry)
+
 	}
 	// Set the size of the text entry to be shorter
 	textEntryContainer := container.NewVBox(
@@ -141,13 +153,22 @@ func processUserInput(
 ) {
 	// Only process if the input is non-empty
 	if input != "" {
-		// Send transcription to Gemini API
-		responseJSON, err := state.Kai.Reason(input)
-		if err != nil {
-			log.Fatalf("Failed to send command scan message: %v", err)
+		// Listen for cancellation from the context
+		select {
+		case <-state.ProcessContext.Done():
+			log.Println("Previous process canceled")
+			return
+		default:
+			// Send transcription to Gemini API
+			responseJSON, err := state.Kai.Reason(input)
+			if err != nil {
+				log.Fatalf("Failed to send command scan message: %v", err)
+			}
+			// Process the JSON response
+			state.Kai.Respond(responseJSON)
+            // After processing, clear the text field
+            updateTextEntry(textEntry, "")
 		}
-		// Process the JSON response
-		state.Kai.Respond(responseJSON)
 	}
 }
 
@@ -180,6 +201,16 @@ func handleListenButtonPress(
 			log.Fatalf("Failed to record audio: %v", err)
 		}
 
+		// Cancel the previous process if it exists
+		if state.CancelProcessFunc != nil {
+			state.CancelProcessFunc()
+		}
+		
+		// Create a new context for the new process
+		ctx, cancel := context.WithCancel(context.Background())
+		state.ProcessContext = ctx
+		state.CancelProcessFunc = cancel
+
 		// TODO: Testing
 		fmt.Println("Recording complete")
 		fmt.Printf("Recorded %d bytes of audio data\n", len(*audioData))
@@ -200,12 +231,10 @@ func handleListenButtonPress(
 			// such as retrying or notifying the user
 			return
 		}
-		// Update the transcription label
-		updateTextEntry(textEntry, transcript)
-		// Process the transcription
-		processUserInput(state, transcript, textEntry)
-		// Clear the text field after processing
-		updateTextEntry(textEntry, "")
+
+		// Process the transcription in a separate goroutine
+		go processUserInput(state, transcript, textEntry)
+
 	}()
 }
 

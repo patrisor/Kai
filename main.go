@@ -4,6 +4,8 @@ import (
     "os"
 	"fmt"
     "log"
+    "regexp"
+    "io/ioutil"
     "path/filepath"
 	// GUI
 	"fyne.io/fyne/v2"
@@ -15,11 +17,29 @@ import (
 
 // Method sets the app's environment variables programmatically
 func init() {
-    configDir := filepath.Join(".config", "service-account-file.json")
-    if _, err := os.Stat(configDir); err == nil {
-        os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", configDir)
+    if os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") == "" {
+        // Look for the .config directory in the current working directory
+        configDir := filepath.Join(".", ".config")
+        files, err := ioutil.ReadDir(configDir)
+        if err != nil {
+            log.Fatalf("Unable to read .config directory: %v", err)
+        }
+        // Regular expression to match service account file
+        var re = regexp.MustCompile(`gen-lang-client-\d+-[a-z0-9]+\.json`)
+        for _, file := range files {
+            if re.MatchString(file.Name()) {
+                serviceAccountPath := filepath.Join(configDir, file.Name())
+                os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", serviceAccountPath)
+                return
+            }
+        }
+        log.Fatalf(
+            "No valid service account file found in %s. "+
+            "Please place the Google Cloud JSON key file in this directory.",
+            configDir,
+        )
     } else {
-        log.Fatalf("Service account file not found: %v", err)
+        log.Println("GOOGLE_APPLICATION_CREDENTIALS is already set.")
     }
 }
 

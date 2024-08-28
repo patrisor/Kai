@@ -2,7 +2,7 @@ module kai
 
 go 1.21
 
-toolchain go1.22.5
+// toolchain go1.22.5
 
 require (
 	cloud.google.com/go/speech v1.24.0

@@ -11,11 +11,15 @@ Kai is your intelligent virtual assistant designed to seamlessly integrate with 
 
 ## Getting Started
 
+To begin using Kai, follow the steps below to set up your environment.
+
 ### Prerequisites
 
 Ensure you have the following installed before starting:
 
-- **Go 1.16 or later**: [Install Go](https://golang.org/dl/)
+- **Go 1.16 or later**:
+  - **macOS**: `brew install go` (or `brew upgrade go` to update)
+  - **Windows/Linux**: [Download and install Go](https://golang.org/dl/)
 - **Git**: [Install Git](https://git-scm.com/)
 - **pkg-config**: Required for compiling with certain dependencies
   - **macOS**: `brew install pkg-config`
@@ -26,29 +30,38 @@ Ensure you have the following installed before starting:
   - **Linux**: `sudo apt-get install libportaudio2 libportaudio-dev`
   - **Windows**: Manually install or use MSYS2
 
-### API Setup (Must be completed before running the application)
+### Step 1: API Setup
 
-1. **Obtain a Gemini API Key**:
-   - Follow the instructions in the [Obtaining a Gemini API Key](#obtaining-a-gemini-api-key) section to get your API key.
+Kai requires two APIs to function properly: the Gemini API and Google Cloud API. Ensure you complete these setups before running the application.
 
-2. **Set Up Google Cloud API Credentials**:
-   - Follow the instructions in the [Setting Up Google Cloud API Credentials](#setting-up-google-cloud-api-credentials) section to download and place the required service account JSON file in the correct directory.
+#### Obtaining a Gemini API Key
 
+1. **Sign Up for the Gemini API**:
+   - Visit the [Gemini API Portal](https://api.gemini.com/) and create an account if you don’t already have one.
 
-Ensure you have the following installed before starting:
+2. **Generate an API Key**:
+   - Navigate to the API section and create a new API key with the necessary permissions.
 
-- **Go 1.16 or later**: [Install Go](https://golang.org/dl/)
-- **Git**: [Install Git](https://git-scm.com/)
-- **pkg-config**: Required for compiling with certain dependencies
-  - **macOS**: `brew install pkg-config`
-  - **Linux**: `sudo apt-get install pkg-config`
-  - **Windows**: Use MSYS2 or another package manager
-- **PortAudio**: Required for audio processing
-  - **macOS**: `brew install portaudio`
-  - **Linux**: `sudo apt-get install libportaudio2 libportaudio-dev`
-  - **Windows**: Manually install or use MSYS2
+3. **Store Your API Key**:
+   - Keep your API key secure. You'll need to input it when you first run Kai.
 
-### Installation
+#### Setting Up Google Cloud API Credentials
+
+To enable speech-to-text and text-to-speech features:
+
+1. **Download the Service Account File**:
+   - Go to the [Google Cloud Console](https://console.cloud.google.com/).
+   - Navigate to **IAM & Admin** > **Service Accounts**.
+   - Select or create a service account with the necessary permissions for both the **Cloud Text-to-Speech API** and **Cloud Speech-to-Text API**.
+   - Click **Manage Keys** > **Add Key** > **Create New Key**.
+   - Choose **JSON** and click **Create** to download the file.
+
+2. **Move the File to the `.config` Directory**:
+   - Place the downloaded JSON file in the `.config` directory within your `kai` project folder.
+
+### Step 2: Installation
+
+After completing the API setup, proceed with the following steps to install and run Kai.
 
 1. **Clone the Repository**:
    ```sh
@@ -56,77 +69,12 @@ Ensure you have the following installed before starting:
    cd kai
    ```
 
-2. **Complete API Setup**:
-   - Make sure you have completed the API setup, including obtaining your Gemini API key and setting up your Google Cloud API credentials.
-
-### Build and Run
-
-1. **Build and Run**:
+2. **Build and Run**:
    ```sh
    go build && ./kai
    ```
 
-**Important**: Do not build or run the application until you have completed the API setup, including obtaining your Gemini API key and setting up your Google Cloud API credentials.
-
-1. **Install or Update Go**:
-   - **macOS**: `brew install go` (or `brew upgrade go` to update)
-   - **Windows/Linux**: [Download and install Go](https://golang.org/dl/)
-
-2. **Clone the Repository**:
-   ```sh
-   git clone https://github.com/patrisor/kai.git
-   cd kai
-   ```
-
-3. **Build and Run**:
-   ```sh
-   go build && ./kai
-   ```
-
-### Obtaining a Gemini API Key
-
-Before you can start using Kai, you'll need to obtain a Gemini API key. Follow these steps:
-
-1. **Sign Up for the Gemini API**:
-   - Visit the [Gemini API Portal](https://api.gemini.com/).
-   - Create an account if you don’t already have one.
-
-2. **Generate an API Key**:
-   - Once logged in, navigate to the API section.
-   - Create a new API key, ensuring you have the necessary permissions for the features you plan to use.
-
-3. **Store Your API Key**:
-   - Keep your API key secure. You'll need to input it when you first run Kai.
-   - Optionally, you can set the API key as an environment variable named `GEMINI_API_KEY`:
-     ```sh
-     export GEMINI_API_KEY=your_api_key_here
-     ```
-
-When you run Kai for the first time, you will be prompted to enter your Gemini API key. Make sure to have it ready.
-
-### Setting Up Google Cloud API Credentials
-
-To enable speech-to-text and text-to-speech features:
-
-1. **Download the Service Account File**:
-   - Go to the [Google Cloud Console](https://console.cloud.google.com/).
-   - Navigate to **IAM & Admin** > **Service Accounts**.
-   - Select or create a service account with the necessary permissions (e.g., "Cloud Speech-to-Text API User").
-   - Click **Manage Keys** > **Add Key** > **Create New Key**.
-   - Choose **JSON** and click **Create**. The file will download automatically.
-
-2. **Move the File to the `.config` Directory**:
-   - Place the downloaded JSON file in the `.config` directory within your `kai` project folder:
-     ```sh
-     mv ~/Downloads/gen-lang-client-<identifier>.json ./kai/.config/
-     ```
-
-3. **Run the Application**:
-   ```sh
-   go build && ./kai
-   ```
-
-Kai will automatically detect the service account file and set up the necessary environment variable.
+**Important**: Do not attempt to build or run the application until you have completed the API setup, including obtaining your Gemini API key and setting up your Google Cloud API credentials.
 
 ## Contributing
 
